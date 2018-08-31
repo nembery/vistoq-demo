@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Validate base
-          command: packer validate ./packer/vistoq-compute.json
+          command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer vistoq-compute
   build-base:
     docker:
       - image: hashicorp/packer:1.2.5
