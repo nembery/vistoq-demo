@@ -1,13 +1,37 @@
 version: 2
 jobs:
-  build:
+  validate:
     docker:
-      - image: debian:stretch
+      - image: hashicorp/packer:1.1.1
+    working_directory: ~/packer
     steps:
       - checkout
       - run:
-          name: Greeting
-          command: echo Hello, world.
+          name: Validate base
+          command: packer validate ./compute-node/packer.json
+    build-base:
+    docker:
+      - image: hashicorp/packer:1.1.1
+    working_directory: ~/packer
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/packer
       - run:
-          name: Print the Current Time
-          command: date
+          name: Build base
+          command: ./scripts/build.sh compute-node ./compuste-node/packer.json
+          no_output_timeout: 30m
+      - persist_to_workspace:
+          root: .
+          paths:
+            - manifest-compute-node.json
+      - store_artifacts:
+          path: manifest-compute-node.json
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - validate
+      - build-base:
+          requires:
+            - validate
