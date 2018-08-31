@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo $GCLOUD_SERVICE_KEY | base64 -d > ${HOME}/gcloud-service-key.json
+echo $GCLOUD_SERVICE_KEY | base64 -d > /root/gcloud-service-key.json
 
 #
 # base.sh DIR TARGET BASE_NAME
@@ -21,7 +21,7 @@ SHA=$(git ls-tree HEAD "$DIR" | cut -d" " -f3 | cut -f1)
 #TAG_EXISTS=$(tag_exists $SHA)
 
 #if [ "$TAG_EXISTS" = "false" ]; then
-packer build ${DIR}/$NAME.json
+packer build --force ${DIR}/$NAME.json
 #else
 #    touch manifest-${NAME}.json
 #fi
