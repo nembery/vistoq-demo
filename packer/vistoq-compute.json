@@ -7,7 +7,8 @@
       "source_image_family": "ubuntu-minimal-1604-lts",
       "ssh_username": "vistoq",
       "zone": "us-central1-a",
-      "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"]
+      "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"],
+      "image_name": "vistoq-compute-v01"
     }
   ]
 }
