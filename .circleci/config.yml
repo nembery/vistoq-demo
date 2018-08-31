@@ -19,7 +19,7 @@ jobs:
           at: ~/packer
       - run:
           name: Build base
-          command: ./scripts/build.sh compute-node ./compuste-node/packer.json
+          command: chmod +x ./scripts/build.sh && ./scripts/build.sh compute-node ./compuste-node/packer.json
           no_output_timeout: 30m
       - persist_to_workspace:
           root: .
