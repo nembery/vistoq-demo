@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Validate base
-          command: packer validate ./compute-node/packer.json
+          command: packer validate ./packer/vistoq-compute.json
   build-base:
     docker:
       - image: hashicorp/packer:1.2.5
