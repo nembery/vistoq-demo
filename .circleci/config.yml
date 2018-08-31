@@ -21,10 +21,6 @@ jobs:
           name: Build base
           command: chmod +x ./scripts/build.sh && ./scripts/build.sh packer vistoq-compute
           no_output_timeout: 30m
-      - persist_to_workspace:
-          root: .
-          paths:
-            - manifest-compute-node.json
       - store_artifacts:
           path: build-results
           destination: build-results
