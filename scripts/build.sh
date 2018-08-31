@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
+echo $GCLOUD_SERVICE_KEY | base64 -d --ignore-garbage > ${HOME}/gcloud-service-key.json
 
 #
 # base.sh DIR TARGET BASE_NAME
