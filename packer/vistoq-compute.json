@@ -10,5 +10,12 @@
       "image_licenses": ["projects/vm-options/global/licenses/enable-vmx"],
       "image_name": "vistoq-compute-v01"
     }
+  ],
+   "provisioners": [
+    {
+    "type": "ansible",
+    "playbook_file": "build-vistoq-demo-pb.yml",
+    "playbook_dir": "ansible"
+    }
   ]
 }
