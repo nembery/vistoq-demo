@@ -26,7 +26,8 @@
     },
     {
       "type": "ansible-local",
-      "playbook_file": "build-vistoq-demo-pb.yml"
+      "playbook_file": "build-vistoq-demo-pb.yml",
+      "playbook_dir": "ansible"
     }
   ]
 }
