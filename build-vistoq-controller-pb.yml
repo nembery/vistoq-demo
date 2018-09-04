@@ -1,6 +1,6 @@
 ---
 
-- name: Provision Vistoq
+- name: Provision Vistoq Controller VM
   hosts: localhost
   vars:
     ansible_ssh_user: vistoq
@@ -18,16 +18,39 @@
     with_items:
       - git
       - python-pip
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - open-vm-tools
 
-  - name: Install KVM dependancies
-    apt:
-      name: "{{ item }}"
+  - name: Add Docker apt key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
       state: present
-      update_cache: true
-    with_items:
-      - qemu-kvm
-      - libvirt-bin
-      - python-libvirt
+    ignore_errors: true
+
+  - name: Add docker apt repo
+    apt_repository:
+      repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_lsb.codename}} stable"
+      update_cache: yes
+
+  - name: Install Docker apt package
+    apt:
+      pkg: docker-ce
+      state: latest
+      update_cache: yes
+
+  - name: Install Ansible
+    pip:
+      name: ansible
+      state: latest
+
+  - name: Check that ssh key exists exists
+    stat:
+      path: /home/vistoq/.ssh/id_rsa
+    register: key_exists
 
   - name: Create vistoq user .ssh directory
     file:
@@ -36,6 +59,7 @@
       mode: 0700
       owner: vistoq
       group: vistoq
+    when: key_exists.stat.exists == false
 
   - name: Setup SSH config
     template:
@@ -44,17 +68,25 @@
       mode: 0400
       owner: vistoq
       group: vistoq
+    when: key_exists.stat.exists == false
 
   - name: Setup SSH keys
     shell: ssh-keygen -t rsa  -q -f /home/vistoq/.ssh/id_rsa -N ""
     become_user: vistoq
+    when: key_exists.stat.exists == false
 
-  - name: Set up network interfaces
-    template:
-      src: templates/interfaces
-      dest: /etc/network/interfaces
+  - name: Adding vistoq user to docker group
+    user:
+      name: vistoq
+      groups: sudo,docker
+      append: yes
 
-  - name: Create login banner
+  - name: Create /opt/paloaltonetworks dir
+    file:
+      name: /opt/paloaltonetworks
+      state: directory
+
+  - name: Create banner
     template:
       src: templates/issue
       dest: /etc/issue
@@ -73,9 +105,6 @@
 
   - name: Remove old tmp files
     shell: rm -rf /var/tmp/* || exit 0
-
-  - name: Fill up and empty disk
-    shell: dd if=/dev/zero of=/EMPTY bs=1M || rm -r /EMPTY
 
   - name: Sync and Done
     command: sync

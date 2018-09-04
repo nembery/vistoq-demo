@@ -1,15 +1,24 @@
 version: 2
 jobs:
-  validate:
+  validate-compute-json:
     docker:
       - image: hashicorp/packer:1.2.5
     working_directory: ~/packer
     steps:
       - checkout
       - run:
-          name: Validate base
+          name: Validate Compute
           command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer vistoq-compute
-  build-base:
+  validate-controller-json:
+    docker:
+      - image: hashicorp/packer:1.2.5
+    working_directory: ~/packer
+    steps:
+      - checkout
+      - run:
+          name: Validate Controller
+          command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer vistoq-controller
+  build-compute:
     docker:
       - image: hashicorp/packer:1.2.5
     working_directory: ~/packer
@@ -18,18 +27,38 @@ jobs:
       - attach_workspace:
           at: ~/packer
       - run:
-          name: Build base
+          name: Build Compute
           command: chmod +x ./scripts/build.sh && ./scripts/build.sh packer vistoq-compute
           no_output_timeout: 30m
       - store_artifacts:
-          path: build-results
-          destination: build-results
+          path: compute-build-results
+          destination: compute-build-results
+  build-controller:
+    docker:
+      - image: hashicorp/packer:1.2.5
+    working_directory: ~/packer
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/packer
+      - run:
+          name: Build Controller
+          command: chmod +x ./scripts/build.sh && ./scripts/build.sh packer vistoq-controller
+          no_output_timeout: 30m
+      - store_artifacts:
+          path: controller-build-results
+          destination: controller-build-results
 
 workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - validate
-      - build-base:
+      - validate-compute
+      - validate-controller
+      - build-compute:
           requires:
-            - validate
+            - validate-compute
+      - build-controller:
+          requires:
+            - validate-controller
+
