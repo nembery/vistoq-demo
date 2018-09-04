@@ -1,0 +1,4 @@
+Host *
+    StrictHostKeyChecking no
+    VisualHostKey yes
+    UserKnownHostsFile=/dev/null
