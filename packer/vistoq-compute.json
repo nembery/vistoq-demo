@@ -16,7 +16,7 @@
   "provisioners": [
     {
       "type": "shell",
-      "execute_command": "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'"
+      "execute_command": "echo 'packer' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
       "inline": [
         "sleep 30",
         "/usr/bin/apt-get update",
