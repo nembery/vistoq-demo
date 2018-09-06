@@ -8,9 +8,11 @@
     ansible_sudo_pass: packer
   connection: local
   become: true
+  vars:
+    wistar_branch: master
 
   tasks:
-  - name: Install Basic dependancies
+  - name: Install dependancies
     apt:
       name: "{{ item }}"
       state: present
@@ -18,61 +20,171 @@
     with_items:
       - git
       - python-pip
-
-  - name: Install KVM dependancies
-    apt:
-      name: "{{ item }}"
-      state: present
-      update_cache: true
-    with_items:
       - qemu-kvm
       - libvirt-bin
       - python-libvirt
+      - build-essential
+      - libxml2-dev
+      - libxslt1-dev
+      - libz-dev
+      - libffi-dev
+      - libssl-dev
+      - python-dev
+      - socat
+      - python-pexpect
+      - python-yaml
+      - unzip
+      - bridge-utils
+      - python-numpy
+      - genisoimage
+      - python-netaddr
+      - python-markupsafe
+      - python-setuptools
+      - mtools
+      - dosfstools
+      - openvswitch-switch
+      - apache2
+      - libapache2-mod-wsgi
 
-#  - name: Create vistoq user .ssh directory
-#    file:
-#      path: /home/vistoq/.ssh
-#      state: directory
-#      mode: 0700
-#      owner: vistoq
-#      group: vistoq
-#
-#  - name: Setup SSH config
-#    template:
-#      src: templates/ssh_config
-#      dest: /home/vistoq/.ssh/config
-#      mode: 0400
-#      owner: vistoq
-#      group: vistoq
-#
-#  - name: Setup SSH keys
-#    shell: ssh-keygen -t rsa  -q -f /home/vistoq/.ssh/id_rsa -N ""
-#    become_user: vistoq
-#
-#  - name: Set up network interfaces
-#    template:
-#      src: templates/interfaces
-#      dest: /etc/network/interfaces
-#
-#  - name: Create login banner
-#    template:
-#      src: templates/issue
-#      dest: /etc/issue
-#
-#  - name: Run apt-get autoremove
-#    command: apt-get -y autoremove
-#
-#  - name: Remove old apt archives
-#    shell: rm -rf /var/cache/apt/archives/* || exit 0
-#
-#  - name: Remove old apt binary cache
-#    shell: rm -rf /var/cache/apt/*bin || exit 0
-#
-#  - name: Remove old log files
-#    shell: rm -rf /var/log/*log || exit 0
-#
-#  - name: Remove old tmp files
-#    shell: rm -rf /var/tmp/* || exit 0
-#
-#  - name: Sync and Done
-#    command: sync
+  - name: Install python-cryptography
+    pip:
+      name: cryptography
+      editable: false
+
+  - name: Install junos-eznc
+    pip:
+      name: junos-eznc
+      editable: false
+
+  - name: Install jxmlease
+    pip:
+      name: jxmlease
+      editable: false
+
+  - name: Install Django
+    pip:
+      name: django
+      version: 1.9.9
+      editable: false
+
+  - name: Install Python virtualBox
+    pip:
+      name: pyvbox
+      editable: false
+
+  - name: Create Wistar directory structure 1
+    file:
+      path: /opt/wistar
+      state: directory
+  - name: Create Wistar directory structure 2
+    file:
+      path: /opt/wistar/user_images
+      state: directory
+  - name: Create Wistar directory structure 3
+    file:
+      path: /opt/wistar/app
+      state: directory
+  - name: Create Wistar directory structure 4
+    file:
+      path: /opt/wistar/media
+      state: directory
+  - name: Create Wistar directory structure 5
+    file:
+      path: /opt/wistar/seeds
+      state: directory
+  - name: Create Wistar directory structure 6
+    file:
+      path: /opt/wistar/user_images/instances
+      state: directory
+
+  - name: Pull latest Wistar from Git
+    git:
+      repo: https://github.com/nembery/wistar.git
+      dest: /opt/wistar/app/
+      version: "{{ wistar_branch }}"
+
+  - name: Create Wistar tables
+    command: /opt/wistar/app/manage.py migrate
+
+  - name: install apache2
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - apache2
+      - libapache2-mod-wsgi
+
+  - name: enable the Apache2 module "wsgi"
+    apache2_module:
+      state: present
+      name: wsgi
+    notify: restart apache
+
+  - name: set permissions on wistar dir
+    file:
+      path: /opt/wistar
+      owner: www-data
+      group: www-data
+      state: directory
+      recurse: yes
+
+  - name: set permissions on wistar log
+    file:
+      path: /var/log/wistar.log
+      owner: www-data
+      group: www-data
+      state: touch
+
+  - name: set permissions on wistar errorlog
+    file:
+      path: /var/log/apache2/wistar.log
+      owner: www-data
+      group: www-data
+      state: touch
+
+  - name: set permissions on wistar accesslog
+    file:
+      path: /var/log/apache2/wistar_access.log
+      owner: www-data
+      group: www-data
+      state: touch
+
+  - name: Create login banner
+    template:
+      src: templates/issue
+      dest: /etc/issue
+
+  - name: copy wistar config file to apache
+    template:
+      src: templates/999-wistar.conf
+      dest: /etc/apache2/sites-available/999-wistar.conf
+
+  - name: enable wistar site in apache
+    file:
+      src: /etc/apache2/sites-available/999-wistar.conf
+      dest: /etc/apache2/sites-enabled/999-wistar.conf
+      state: link
+    notify: restart apache
+
+  - name: add www-data to libvirt users
+    user:
+      name: www-data
+      groups: libvirtd
+      append: yes
+
+  - name: Allow libvirtd group to modify ovs-vsctl
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      line: '%libvirtd ALL=NOPASSWD: /usr/bin/ovs-vsctl'
+
+  - name: Set authorized key took from file
+    authorized_key:
+      user: vistoq
+      state: present
+      key: "{{ lookup('file', 'templates/authorized_key.pub') }}"
+
+  handlers:
+    - name: restart apache
+      service: name=apache2 state=restarted
+
