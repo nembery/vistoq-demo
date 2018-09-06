@@ -29,50 +29,50 @@
       - libvirt-bin
       - python-libvirt
 
-  - name: Create vistoq user .ssh directory
-    file:
-      path: /home/vistoq/.ssh
-      state: directory
-      mode: 0700
-      owner: vistoq
-      group: vistoq
-
-  - name: Setup SSH config
-    template:
-      src: templates/ssh_config
-      dest: /home/vistoq/.ssh/config
-      mode: 0400
-      owner: vistoq
-      group: vistoq
-
-  - name: Setup SSH keys
-    shell: ssh-keygen -t rsa  -q -f /home/vistoq/.ssh/id_rsa -N ""
-    become_user: vistoq
-
-  - name: Set up network interfaces
-    template:
-      src: templates/interfaces
-      dest: /etc/network/interfaces
-
-  - name: Create login banner
-    template:
-      src: templates/issue
-      dest: /etc/issue
-
-  - name: Run apt-get autoremove
-    command: apt-get -y autoremove
-
-  - name: Remove old apt archives
-    shell: rm -rf /var/cache/apt/archives/* || exit 0
-
-  - name: Remove old apt binary cache
-    shell: rm -rf /var/cache/apt/*bin || exit 0
-
-  - name: Remove old log files
-    shell: rm -rf /var/log/*log || exit 0
-
-  - name: Remove old tmp files
-    shell: rm -rf /var/tmp/* || exit 0
-
-  - name: Sync and Done
-    command: sync
+#  - name: Create vistoq user .ssh directory
+#    file:
+#      path: /home/vistoq/.ssh
+#      state: directory
+#      mode: 0700
+#      owner: vistoq
+#      group: vistoq
+#
+#  - name: Setup SSH config
+#    template:
+#      src: templates/ssh_config
+#      dest: /home/vistoq/.ssh/config
+#      mode: 0400
+#      owner: vistoq
+#      group: vistoq
+#
+#  - name: Setup SSH keys
+#    shell: ssh-keygen -t rsa  -q -f /home/vistoq/.ssh/id_rsa -N ""
+#    become_user: vistoq
+#
+#  - name: Set up network interfaces
+#    template:
+#      src: templates/interfaces
+#      dest: /etc/network/interfaces
+#
+#  - name: Create login banner
+#    template:
+#      src: templates/issue
+#      dest: /etc/issue
+#
+#  - name: Run apt-get autoremove
+#    command: apt-get -y autoremove
+#
+#  - name: Remove old apt archives
+#    shell: rm -rf /var/cache/apt/archives/* || exit 0
+#
+#  - name: Remove old apt binary cache
+#    shell: rm -rf /var/cache/apt/*bin || exit 0
+#
+#  - name: Remove old log files
+#    shell: rm -rf /var/log/*log || exit 0
+#
+#  - name: Remove old tmp files
+#    shell: rm -rf /var/tmp/* || exit 0
+#
+#  - name: Sync and Done
+#    command: sync
