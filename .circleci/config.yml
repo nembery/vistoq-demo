@@ -9,15 +9,15 @@ jobs:
       - run:
           name: Validate Compute
           command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer vistoq-compute
-  validate-controller-json:
-    docker:
-      - image: hashicorp/packer:1.2.5
-    working_directory: ~/packer
-    steps:
-      - checkout
-      - run:
-          name: Validate Controller
-          command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer vistoq-controller
+#  validate-controller-json:
+#    docker:
+#      - image: hashicorp/packer:1.2.5
+#    working_directory: ~/packer
+#    steps:
+#      - checkout
+#      - run:
+#          name: Validate Controller
+#          command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer vistoq-controller
   build-compute:
     docker:
       - image: hashicorp/packer:1.2.5
@@ -33,32 +33,32 @@ jobs:
       - store_artifacts:
           path: compute-build-results
           destination: compute-build-results
-  build-controller:
-    docker:
-      - image: hashicorp/packer:1.2.5
-    working_directory: ~/packer
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/packer
-      - run:
-          name: Build Controller
-          command: chmod +x ./scripts/build.sh && ./scripts/build.sh packer vistoq-controller
-          no_output_timeout: 30m
-      - store_artifacts:
-          path: controller-build-results
-          destination: controller-build-results
+#  build-controller:
+#    docker:
+#      - image: hashicorp/packer:1.2.5
+#    working_directory: ~/packer
+#    steps:
+#      - checkout
+#      - attach_workspace:
+#          at: ~/packer
+#      - run:
+#          name: Build Controller
+#          command: chmod +x ./scripts/build.sh && ./scripts/build.sh packer vistoq-controller
+#          no_output_timeout: 30m
+#      - store_artifacts:
+#          path: controller-build-results
+#          destination: controller-build-results
 
 workflows:
   version: 2
   build-and-deploy:
     jobs:
       - validate-compute-json
-      - validate-controller-json
+#      - validate-controller-json
       - build-compute:
           requires:
             - validate-compute-json
-      - build-controller:
-          requires:
-            - validate-controller-json
+#      - build-controller:
+#          requires:
+#            - validate-controller-json
 
