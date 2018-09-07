@@ -123,19 +123,18 @@
       src: templates/provisioner
       dest: /opt/paloaltonetworks/docker
 
-
   - name: Copy docker-compose service
     copy:
       src: templates/docker-compose.service
       dest: /etc/systemd/system/docker-compose.service
 
- - name: enable vistoq_demo service (docker-compose)
-   systemd:
-    name: docker-compose
-    daemon_reload: yes
-    enabled: yes
-    state: started
-    masked: no
+  - name: enable vistoq_demo service (docker-compose)
+    systemd:
+      name: docker-compose
+      daemon_reload: yes
+      enabled: yes
+      state: started
+      masked: no
 
   - name: Run apt-get autoremove
     command: apt-get -y autoremove
