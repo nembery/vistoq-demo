@@ -23,6 +23,7 @@
       - curl
       - software-properties-common
       - open-vm-tools
+      - vim
 
   - name: Add Docker apt key
     apt_key:
@@ -45,6 +46,11 @@
   - name: Install Ansible
     pip:
       name: ansible
+      state: latest
+
+  - name: Install docker-compose
+    pip:
+      name: docker-compose
       state: latest
 
   - name: Check that ssh key exists exists
@@ -86,10 +92,36 @@
       name: /opt/paloaltonetworks
       state: directory
 
+  - name: Create /opt/paloaltonetworks/docker dir
+    file:
+      name: /opt/paloaltonetworks/docker
+      state: directory
+
   - name: Create banner
     template:
       src: templates/issue
       dest: /etc/issue
+
+  - name: Set authorized key
+    authorized_key:
+      user: vistoq
+      state: present
+      key: "{{ lookup('file', 'templates/authorized_key.pub') }}"
+
+  - name: Copy docker-compose file over
+    copy:
+      src: templates/salt-master-compose.yml
+      dest: /opt/paloaltonetworks/docker
+
+  - name: Copy compose artifacts over
+    copy:
+      src: templates/aframe
+      dest: /opt/paloaltonetworks/docker
+
+  - name: Copy provisioner compose artifacts over
+    copy:
+      src: templates/provisioner
+      dest: /opt/paloaltonetworks/docker
 
   - name: Run apt-get autoremove
     command: apt-get -y autoremove
@@ -108,3 +140,5 @@
 
   - name: Sync and Done
     command: sync
+
+

@@ -1,0 +1,39 @@
+version: '3'
+services:
+  bootstrapper:
+    image: "nembery/panos_bootstrapper:v0.8.6"
+    ports:
+    - "5000:5000"
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 8s
+
+  provisioner:
+    image: "nembery/salt-master:latest"
+    ports:
+    - "4505:4505"
+    - "4506:4506"
+    - "9000:9000"
+    volumes:
+     - ./provisioner/config:/etc/salt/master.d
+     - ./provisioner/salt:/srv/salt
+     - ./provisioner/pki:/var/lib/salt/pki/master
+     - ./provisioner/cache:/var/cache/salt/master
+     - ./provisioner/run:/var/run/salt
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+
+  aframe:
+    image: "nembery/aframe:v1.4.8"
+    ports:
+     - "8080:8000"
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 1s
+    volumes:
+     - ./aframe/imports:/app/aframe/conf/imports
+     - ./aframe/aframe.conf:/app/aframe/conf/aframe.conf
