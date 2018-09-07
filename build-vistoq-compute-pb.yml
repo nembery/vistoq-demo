@@ -33,7 +33,7 @@
     template:
       src: templates/salt-minion.conf
       dest: /etc/salt/minion
-      notify: restart salt-minion
+    notify: restart salt-minion
 
   - name: Set authorized key
     authorized_key:
