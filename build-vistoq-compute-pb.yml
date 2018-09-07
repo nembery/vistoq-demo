@@ -35,12 +35,12 @@
       dest: /etc/salt/minion
     notify: restart salt-minion
 
+  - name: zero out minion_id
+    shell: cat /dev/null > /etc/salt/minion_id
+
   - name: Set authorized key
     authorized_key:
       user: vistoq
       state: present
       key: "{{ lookup('file', 'templates/authorized_key.pub') }}"
 
-  handlers:
-    - name: restart salt-minion
-      service: name=salt-minion state=restarted

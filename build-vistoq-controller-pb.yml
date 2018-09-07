@@ -111,7 +111,7 @@
   - name: Copy docker-compose file over
     copy:
       src: templates/salt-master-compose.yml
-      dest: /opt/paloaltonetworks/docker
+      dest: /opt/paloaltonetworks/docker/docker-compose.yml
 
   - name: Copy compose artifacts over
     copy:

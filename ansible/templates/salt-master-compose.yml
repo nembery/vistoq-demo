@@ -29,11 +29,11 @@ services:
   aframe:
     image: "nembery/aframe:v1.4.8"
     ports:
-     - "8080:8000"
+     - "80:8000"
     deploy:
       restart_policy:
         condition: any
         delay: 1s
     volumes:
      - ./aframe/imports:/app/aframe/conf/imports
-     - ./aframe/aframe.conf:/app/aframe/conf/aframe.conf
+#     - ./aframe/aframe.conf:/app/aframe/conf/aframe.conf
