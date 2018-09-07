@@ -4,10 +4,6 @@ services:
     image: "nembery/panos_bootstrapper:v0.8.6"
     ports:
     - "5000:5000"
-    deploy:
-      restart_policy:
-        condition: any
-        delay: 8s
 
   provisioner:
     image: "nembery/salt-master:latest"
@@ -21,19 +17,11 @@ services:
      - ./provisioner/pki:/var/lib/salt/pki/master
      - ./provisioner/cache:/var/cache/salt/master
      - ./provisioner/run:/var/run/salt
-    deploy:
-      restart_policy:
-        condition: any
-        delay: 5s
 
   aframe:
     image: "nembery/aframe:v1.4.8"
     ports:
      - "80:8000"
-    deploy:
-      restart_policy:
-        condition: any
-        delay: 1s
     volumes:
-     - ./aframe/imports:/app/aframe/conf/imports
+     - ./aframe:/app/aframe/conf/imports
 #     - ./aframe/aframe.conf:/app/aframe/conf/aframe.conf
