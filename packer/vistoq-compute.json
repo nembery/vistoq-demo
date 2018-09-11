@@ -6,7 +6,7 @@
       "project_id": "vistoq-demo",
       "source_image_family": "ubuntu-minimal-1604-lts",
       "ssh_username": "vistoq",
-      "zone": "us-central1-a",
+      "zone": "us-central1-b",
       "image_licenses": [
         "projects/vm-options/global/licenses/enable-vmx"
       ],
