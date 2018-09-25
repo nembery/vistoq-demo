@@ -5,8 +5,19 @@
 {% set admin_username = (salt['pillar.get']('admin_username', 'admin')) %}
 {% set admin_password = (salt['pillar.get']('admin_password', 'admin')) %}
 
+{% set left_bridge = (salt['pillar.get']('left_interface_bridge', 'br1')) %}
+{% set right_bridge = (salt['pillar.get']('right_interface_bridge', 'br0')) %}
+
 {% set instance_path = '/opt/instances/' ~ vm_name ~ '.img' %}
 {% set bootstrap_path = '/opt/instances/' ~ vm_name ~ '_bootstrap.iso' %}
+
+ensure_left_bridge:
+  cmd.run:
+    - name: 'brctl show | grep {{ left_bridge }} || brctl addbr {{ left_bridge }}'
+
+ensure_right_bridge:
+  cmd.run:
+    - name: 'brctl show | grep {{ right_bridge }} || brctl addbr {{ right_bridge }}'
 
 create_domain_template:
   file.managed:
@@ -14,8 +25,14 @@ create_domain_template:
     - source: salt://domain.j2
     - template: jinja
     - context:
+        vm_name: {{ vm_name }}
         instance_path: {{ instance_path }}
         bootstrap_path: {{ bootstrap_path }}
+        left_bridge: {{ left_bridge }}
+        right_bridge: {{ right_bridge }}
+    - require:
+       - cmd: ensure_left_bridge
+       - cmd: ensure_right_bridge
 
 create_image_dir:
   file.directory:
