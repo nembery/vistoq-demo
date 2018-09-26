@@ -21,7 +21,11 @@ services:
   aframe:
     image: "nembery/aframe:v1.4.8"
     ports:
-     - "80:8000"
+     - "8080:8000"
     volumes:
      - ./aframe:/app/aframe/conf/imports
-#     - ./aframe/aframe.conf:/app/aframe/conf/aframe.conf
+
+  vistoq:
+    image: "nembery/vistoq_portal"
+    ports:
+      - "80:5000"
