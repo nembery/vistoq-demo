@@ -4,9 +4,9 @@
         "bootstrap_template": "Default Bootstrap.xml",
         "hostname": "{{ pillar['vm_name'] }}",
         "init_cfg_template": "Default Init-Cfg",
-        "dhcp_or_static": "dhcp_client",
+        "dhcp_or_static": "dhcp-client",
         "default_gateway": "",
-        "dg_name": "",
+        "dg_name": "{{ pillar['vm_name'] }}",
         "dhcp_accept_server_domain": "",
         "dhcp_accept_server_hostname": "",
         "dhcp_send_client_id": "",
@@ -18,8 +18,9 @@
         "ipv6_default_gateway": "",
         "netmask": "",
         "op_command_modes": "",
-        "panorama_server": "",
+        "panorama_server": "{{ pillar["panorama_ip"] }}",
         "panorama_server_2": "",
-        "tpl_name": "",
-        "vm_auth_key": ""
+        "tpl_name": "{{ pillar["vm_name"] }}",
+        "vm_auth_key": "{{ pillar["vm_auth_key"] }}",
+        "auth_key": "{{ pillar["auth_key"] }}"
 }

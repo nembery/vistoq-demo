@@ -24,12 +24,12 @@ create_domain_template:
     - name: /var/tmp/{{ vm_name }}.xml
     - source: salt://domain.j2
     - template: jinja
-    - context:
-        vm_name: {{ vm_name }}
-        instance_path: {{ instance_path }}
-        bootstrap_path: {{ bootstrap_path }}
-        left_bridge: {{ left_bridge }}
-        right_bridge: {{ right_bridge }}
+    - defaults:
+        vm_name: '{{ vm_name }}'
+        instance_path: '{{ instance_path }}'
+        bootstrap_path: '{{ bootstrap_path }}'
+        left_bridge: '{{ left_bridge }}'
+        right_bridge: '{{ right_bridge }}'
     - require:
        - cmd: ensure_left_bridge
        - cmd: ensure_right_bridge
@@ -59,6 +59,10 @@ generate_bootstrap_payload:
         admin_password: {{ admin_password }}
         vm_name: {{ vm_name }}
 
+remove_stale_bootstrap_iso:
+  file.absent:
+    - name: {{ bootstrap_path }}
+
 get_bootstrap_iso:
   cmd.run:
     - name: curl -X POST -d @/var/tmp/bootstrap_payload.json http://controller-01:5000/bootstrap_kvm -o {{ bootstrap_path }}
@@ -67,6 +71,7 @@ get_bootstrap_iso:
       - file: generate_bootstrap_payload
       - cmd: ensure_latest_image
       - file: create_domain_template
+      - file: remove_stale_bootstrap_iso
 
 create_thin_image:
   cmd.run:
