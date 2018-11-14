@@ -81,7 +81,7 @@ create_thin_image:
 
 create_domain:
   module.run:
-   - name: virt.create_xml_path
+   - name: virt.define_xml_path
    - path: /var/tmp/{{ vm_name }}.xml
    - require:
       - cmd: get_bootstrap_iso
