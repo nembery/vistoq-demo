@@ -85,3 +85,10 @@ create_domain:
    - path: /var/tmp/{{ vm_name }}.xml
    - require:
       - cmd: get_bootstrap_iso
+
+start_domain:
+  module.run:
+   - name: virt.start
+   - vm_: {{ vm_name }}
+   - require:
+      - module: create_domain
