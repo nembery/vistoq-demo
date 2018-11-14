@@ -1,7 +1,7 @@
 version: '3'
 services:
   bootstrapper:
-    image: "nembery/panos_bootstrapper:v0.8.7"
+    image: "nembery/panos_bootstrapper:latest"
     ports:
     - "5000:5000"
 
@@ -15,7 +15,7 @@ services:
      - ./provisioner/config:/etc/salt/master.d
      - ./provisioner/salt:/srv/salt
      - ./provisioner/pki:/var/lib/salt/pki/master
-     - ./provisioner/cache:/var/cache/salt/master
+     - ./provisioner/pki:/etc/salt/pki/master
      - ./provisioner/run:/var/run/salt
 
   aframe:
@@ -26,6 +26,6 @@ services:
      - ./aframe:/app/aframe/conf/imports
 
   vistoq:
-    image: "nembery/vistoq_portal"
+    image: "nembery/vistoq2"
     ports:
       - "80:5000"
