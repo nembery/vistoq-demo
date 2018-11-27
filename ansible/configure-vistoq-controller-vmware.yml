@@ -1,0 +1,26 @@
+---
+
+- name: VMWare specific Configurations for Vistoq Controller VM
+  hosts: localhost
+  vars:
+    ansible_ssh_user: vistoq
+    ansible_ssh_pass: vistoq123
+    ansible_sudo_pass: vistoq123
+  connection: local
+  become: true
+
+  tasks:
+  - name: Install Basic dependancies
+    apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: true
+    with_items:
+      - git
+      - python-pip
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - open-vm-tools
+      - vim

@@ -4,8 +4,8 @@
   hosts: localhost
   vars:
     ansible_ssh_user: vistoq
-    ansible_ssh_pass: packer
-    ansible_sudo_pass: packer
+    ansible_ssh_pass: vistoq123
+    ansible_sudo_pass: vistoq123
   connection: local
   become: true
 

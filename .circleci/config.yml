@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Validate Compute
-          command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer vistoq-compute
+          command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer/gcp vistoq-compute
   validate-controller-json:
     docker:
       - image: hashicorp/packer:1.2.5
@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run:
           name: Validate Controller
-          command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer vistoq-controller
+          command: chmod +x ./scripts/validate.sh && ./scripts/validate.sh packer/gcp vistoq-controller
   build-compute:
     docker:
       - image: hashicorp/packer:1.2.5
@@ -28,7 +28,7 @@ jobs:
           at: ~/packer
       - run:
           name: Build Compute
-          command: chmod +x ./scripts/build.sh && ./scripts/build.sh packer vistoq-compute
+          command: chmod +x ./scripts/build.sh && ./scripts/build.sh packer/gcp vistoq-compute
           no_output_timeout: 30m
       - store_artifacts:
           path: compute-build-results
@@ -43,7 +43,7 @@ jobs:
           at: ~/packer
       - run:
           name: Build Controller
-          command: chmod +x ./scripts/build.sh && ./scripts/build.sh packer vistoq-controller
+          command: chmod +x ./scripts/build.sh && ./scripts/build.sh packer/gcp vistoq-controller
           no_output_timeout: 30m
       - store_artifacts:
           path: controller-build-results

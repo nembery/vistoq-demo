@@ -1,3 +1,20 @@
+
+# Building Vistoq Demo on Locally
+
+## Requirements
+
+* VMWare [Fusion Homepage](https://www.vmware.com/products/fusion.html)
+* packer [Packer Homepage](https://www.packer.io/intro/) 
+
+## Usage
+
+```bash
+
+packer build -on-error=abort packer/vmware/vistoq-controller.json
+packer build -on-error=abort packer/vmware/vistoq-compute.json
+
+```
+
 # Example CLI
 
 ```bash

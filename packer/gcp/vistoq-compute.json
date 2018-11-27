@@ -1,0 +1,33 @@
+{
+  "builders": [
+    {
+      "type": "googlecompute",
+      "account_file": "/root/gcloud-service-key.json",
+      "project_id": "vistoq-demo",
+      "source_image_family": "ubuntu-minimal-1604-lts",
+      "ssh_username": "vistoq",
+      "zone": "us-central1-b",
+      "image_licenses": [
+        "projects/vm-options/global/licenses/enable-vmx"
+      ],
+      "image_name": "vistoq-compute-v01"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'packer' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "sleep 30",
+        "/usr/bin/apt-get update",
+        "/usr/bin/apt-get -y install python-pip",
+        "pip install ansible"
+      ]
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "build-vistoq-compute-pb.yml",
+      "playbook_dir": "ansible"
+    }
+  ]
+}
