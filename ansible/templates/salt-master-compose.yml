@@ -26,6 +26,6 @@ services:
      - ./aframe:/app/aframe/conf/imports
 
   vistoq:
-    image: "nembery/vistoq2"
+    image: "paloaltonetworks/vistoq:v0.1"
     ports:
       - "80:5000"
