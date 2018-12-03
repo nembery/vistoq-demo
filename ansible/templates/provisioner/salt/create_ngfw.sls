@@ -65,7 +65,7 @@ remove_stale_bootstrap_iso:
 
 get_bootstrap_iso:
   cmd.run:
-    - name: curl -X POST -d @/var/tmp/bootstrap_payload.json http://controller-01:5000/bootstrap_kvm -o {{ bootstrap_path }}
+    - name: 'curl -X POST -d @/var/tmp/bootstrap_payload.json -H "Content-Type: application/json" http://controller-01:5000/bootstrap_kvm -o {{ bootstrap_path }}'
     - creates: {{ bootstrap_path }}
     - require:
       - file: generate_bootstrap_payload
